@@ -1,66 +1,68 @@
-import { useState } from "react";
-import { Card } from "@/components/ui/card";
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { IdCard, User, Home } from "lucide-react";
 import { toast } from "sonner";
+import VotingScreen from "./VotingScreen";
 
 const VoterDetails = () => {
-  const [uniqueId, setUniqueId] = useState("");
-  const [name, setName] = useState("");
-  const [wardNumber, setWardNumber] = useState("");
+  const [detailsSubmitted, setDetailsSubmitted] = useState(false);
+  const [formData, setFormData] = useState({
+    uniqueId: "",
+    name: "",
+    wardNumber: "",
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!uniqueId || !name || !wardNumber) {
+    
+    if (!formData.uniqueId || !formData.name || !formData.wardNumber) {
       toast.error("Please fill in all fields");
       return;
     }
-    // Here we would typically submit the data to a backend
-    console.log("Voter details submitted:", { uniqueId, name, wardNumber });
-    toast.success("Voter details submitted successfully!");
+
+    console.log("Voter details submitted:", formData);
+    setDetailsSubmitted(true);
+    toast.success("Details submitted successfully!");
   };
 
+  if (detailsSubmitted) {
+    return <VotingScreen />;
+  }
+
   return (
-    <Card className="p-6 max-w-md mx-auto">
-      <h2 className="text-2xl font-bold text-center mb-6">Enter Voter Details</h2>
+    <div className="max-w-md mx-auto p-6">
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-2">
-          <Label htmlFor="uniqueId" className="flex items-center gap-2">
-            <IdCard className="h-4 w-4" />
-            Unique ID
-          </Label>
+          <Label htmlFor="uniqueId">Unique ID</Label>
           <Input
             id="uniqueId"
-            value={uniqueId}
-            onChange={(e) => setUniqueId(e.target.value)}
-            placeholder="Enter your unique voter ID"
+            value={formData.uniqueId}
+            onChange={(e) =>
+              setFormData({ ...formData, uniqueId: e.target.value })
+            }
+            placeholder="Enter your unique ID"
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="name" className="flex items-center gap-2">
-            <User className="h-4 w-4" />
-            Full Name
-          </Label>
+          <Label htmlFor="name">Full Name</Label>
           <Input
             id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             placeholder="Enter your full name"
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="wardNumber" className="flex items-center gap-2">
-            <Home className="h-4 w-4" />
-            Ward Number
-          </Label>
+          <Label htmlFor="wardNumber">Ward Number</Label>
           <Input
             id="wardNumber"
-            value={wardNumber}
-            onChange={(e) => setWardNumber(e.target.value)}
+            value={formData.wardNumber}
+            onChange={(e) =>
+              setFormData({ ...formData, wardNumber: e.target.value })
+            }
             placeholder="Enter your ward number"
           />
         </div>
@@ -69,7 +71,7 @@ const VoterDetails = () => {
           Submit Details
         </Button>
       </form>
-    </Card>
+    </div>
   );
 };
 
