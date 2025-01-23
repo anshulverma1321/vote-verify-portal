@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Upload, Camera, CheckCircle, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
+import VoterDetails from "@/components/VoterDetails";
 
 const Dashboard = () => {
   const [idVerified, setIdVerified] = useState(false);
@@ -40,6 +41,8 @@ const Dashboard = () => {
     }
   };
 
+  const isVerificationComplete = idVerified && faceVerified;
+
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
@@ -48,72 +51,66 @@ const Dashboard = () => {
           <p className="mt-2 text-gray-600">Complete these steps to verify your voting eligibility</p>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2">
-          <Card className="p-6">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold">ID Verification</h2>
-                {idVerified ? (
-                  <CheckCircle className="text-green-500 h-6 w-6" />
-                ) : (
-                  <AlertCircle className="text-yellow-500 h-6 w-6" />
-                )}
+        {!isVerificationComplete && (
+          <div className="grid gap-6 md:grid-cols-2">
+            <Card className="p-6">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl font-semibold">ID Verification</h2>
+                  {idVerified ? (
+                    <CheckCircle className="text-green-500 h-6 w-6" />
+                  ) : (
+                    <AlertCircle className="text-yellow-500 h-6 w-6" />
+                  )}
+                </div>
+                <p className="text-gray-600 text-sm">Upload a valid government-issued ID</p>
+                <div className="mt-4">
+                  <input
+                    type="file"
+                    id="id-upload"
+                    className="hidden"
+                    onChange={handleIdUpload}
+                    accept="image/*"
+                  />
+                  <Button
+                    onClick={() => document.getElementById("id-upload")?.click()}
+                    disabled={isProcessing || idVerified}
+                    className="w-full"
+                  >
+                    <Upload className="mr-2 h-4 w-4" />
+                    {idVerified ? "ID Verified" : "Upload ID"}
+                  </Button>
+                </div>
               </div>
-              <p className="text-gray-600 text-sm">Upload a valid government-issued ID</p>
-              <div className="mt-4">
-                <input
-                  type="file"
-                  id="id-upload"
-                  className="hidden"
-                  onChange={handleIdUpload}
-                  accept="image/*"
-                />
-                <Button
-                  onClick={() => document.getElementById("id-upload")?.click()}
-                  disabled={isProcessing || idVerified}
-                  className="w-full"
-                >
-                  <Upload className="mr-2 h-4 w-4" />
-                  {idVerified ? "ID Verified" : "Upload ID"}
-                </Button>
-              </div>
-            </div>
-          </Card>
+            </Card>
 
-          <Card className="p-6">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold">Face Verification</h2>
-                {faceVerified ? (
-                  <CheckCircle className="text-green-500 h-6 w-6" />
-                ) : (
-                  <AlertCircle className="text-yellow-500 h-6 w-6" />
-                )}
+            <Card className="p-6">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl font-semibold">Face Verification</h2>
+                  {faceVerified ? (
+                    <CheckCircle className="text-green-500 h-6 w-6" />
+                  ) : (
+                    <AlertCircle className="text-yellow-500 h-6 w-6" />
+                  )}
+                </div>
+                <p className="text-gray-600 text-sm">Complete a face verification check</p>
+                <div className="mt-4">
+                  <Button
+                    onClick={handleFaceCapture}
+                    disabled={isProcessing || faceVerified || !idVerified}
+                    className="w-full"
+                  >
+                    <Camera className="mr-2 h-4 w-4" />
+                    {faceVerified ? "Face Verified" : "Start Face Verification"}
+                  </Button>
+                </div>
               </div>
-              <p className="text-gray-600 text-sm">Complete a face verification check</p>
-              <div className="mt-4">
-                <Button
-                  onClick={handleFaceCapture}
-                  disabled={isProcessing || faceVerified || !idVerified}
-                  className="w-full"
-                >
-                  <Camera className="mr-2 h-4 w-4" />
-                  {faceVerified ? "Face Verified" : "Start Face Verification"}
-                </Button>
-              </div>
-            </div>
-          </Card>
-        </div>
-
-        {idVerified && faceVerified && (
-          <div className="mt-8 text-center">
-            <div className="bg-green-50 p-4 rounded-lg">
-              <p className="text-green-800 font-medium">
-                Verification complete! You are now eligible to vote.
-              </p>
-            </div>
+            </Card>
           </div>
         )}
+
+        {isVerificationComplete && <VoterDetails />}
       </div>
     </div>
   );
